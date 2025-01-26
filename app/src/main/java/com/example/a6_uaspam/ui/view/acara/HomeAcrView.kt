@@ -1,15 +1,26 @@
 package com.example.a6_uaspam.ui.view.acara
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -32,7 +43,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -41,6 +54,87 @@ import com.example.a6_uaspam.R
 import com.example.a6_uaspam.model.Acara
 
 
+@Composable
+fun OnLoading(
+    modifier: Modifier = Modifier
+) {
+    // Menggunakan animateFloatAsState untuk rotasi gambar
+    val rotation by animateFloatAsState(
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1000, easing = LinearEasing)
+        )
+    )
+
+    Image(
+        modifier = modifier
+            .size(200.dp)
+            .graphicsLayer(rotationZ = rotation), // Terapkan rotasi pada gambar
+        painter = painterResource(R.drawable.loading),
+        contentDescription = stringResource(R.string.loading)
+    )
+}
+
+@Composable
+fun OnError(
+    retryAction: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    // Menggunakan animateDpAsState untuk pergerakan kecil pada gambar error
+    val offset by animateDpAsState(
+        targetValue = if (System.currentTimeMillis() % 2 == 0L) 8.dp else -8.dp,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 500, easing = FastOutSlowInEasing)
+        )
+    )
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.error),
+            contentDescription = "",
+            modifier = Modifier.offset(y = offset) // Terapkan pergerakan pada gambar
+        )
+        Text(
+            text = stringResource(R.string.loading_failed),
+            modifier = Modifier.padding(16.dp)
+        )
+        Button(onClick = retryAction) {
+            Text(stringResource(R.string.retry))
+        }
+    }
+}
+
+@Composable
+fun AcrLayout(
+    acara: List<Acara>,
+    modifier: Modifier = Modifier,
+    onEditClick: (Acara) -> Unit,
+    onDetailClick: (Acara) -> Unit,
+    onDeleteClick: (Acara) -> Unit = {}
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(), // Pastikan LazyColumn mengisi ruang yang tersedia
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(
+            items = acara,
+            itemContent = { acara ->
+                AcrCard(
+                    acara = acara,
+                    modifier = Modifier.fillMaxWidth(),
+                    onDetailClick = { onDetailClick(acara) },
+                    onEditClick = { onEditClick(acara) },
+                    onDeleteClick = { onDeleteClick(acara) }
+                )
+            }
+        )
+    }
+}
 
 @Composable
 fun AcrCard(
