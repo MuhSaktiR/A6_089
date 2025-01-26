@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,7 +26,10 @@ fun CostumeTopAppBar(
     onRefresh: () -> Unit = {},
 ) {
     CenterAlignedTopAppBar(
-        title = { Text(title) },
+        title = { Text(
+            title,
+            fontWeight = FontWeight.Bold
+        ) },
         actions = {
             if (showRefreshButton) { // Tampilkan tombol refresh jika true
                 Icon(imageVector = Icons.Default.Refresh, contentDescription = "", modifier = Modifier.clickable {
