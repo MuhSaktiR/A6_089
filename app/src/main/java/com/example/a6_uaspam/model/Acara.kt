@@ -24,11 +24,12 @@ data class Acara(
     @SerialName("status_acara")
     val status: String,
 
-//    @SerialName("id_klien")
-//    val idK: Int? = null,
-//
-//    @SerialName("id_vendor")
-//    val idV: Int? = null,
+    @SerialName("id_klien")
+    val idK: Int? = null,
+
+    @SerialName("id_lokasi")
+    val idL: Int? = null,
+
 )
 
 @Serializable
