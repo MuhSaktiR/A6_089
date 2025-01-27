@@ -1,14 +1,6 @@
 package com.example.a6_uaspam.ui.view.acara
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,7 +22,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -55,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -65,6 +54,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.a6_uaspam.R
 import com.example.a6_uaspam.model.Acara
 import com.example.a6_uaspam.ui.customwidget.CostumeTopAppBar
@@ -257,55 +251,62 @@ fun ManajemenSection(
 
 
 @Composable
-fun OnLoading(
-    modifier: Modifier = Modifier
-) {
-    // Menggunakan animateFloatAsState untuk rotasi gambar
-    val rotation by animateFloatAsState(
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1000, easing = LinearEasing)
-        )
+fun OnLoading(modifier: Modifier = Modifier) {
+    // Memuat file Lottie
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading))
+
+    // Menjalankan animasi
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        speed = 1.5f,
+        iterations = LottieConstants.IterateForever // Animasi berjalan terus-menerus
     )
 
-    Image(
-        modifier = modifier
-            .size(200.dp)
-            .graphicsLayer(rotationZ = rotation), // Terapkan rotasi pada gambar
-        painter = painterResource(R.drawable.loading),
-        contentDescription = stringResource(R.string.loading)
+    // Menampilkan animasi
+    LottieAnimation(
+        composition = composition,
+        progress = { progress },
+        modifier = modifier.size(50.dp)
     )
 }
+
 
 @Composable
 fun OnError(
     retryAction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Menggunakan animateDpAsState untuk pergerakan kecil pada gambar error
-    val offset by animateDpAsState(
-        targetValue = if (System.currentTimeMillis() % 2 == 0L) 8.dp else -8.dp,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 500, easing = FastOutSlowInEasing)
-        )
-    )
-
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.error),
-            contentDescription = "",
-            modifier = Modifier.offset(y = offset) // Terapkan pergerakan pada gambar
+        // Menggunakan animasi Lottie untuk menggantikan gambar error
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.erroranimation1))
+
+        val progress by animateLottieCompositionAsState(
+            composition = composition,
+            iterations = LottieConstants.IterateForever // Animasi terus berulang
         )
+
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.size(250.dp) // Sesuaikan ukuran
+        )
+
         Text(
             text = stringResource(R.string.loading_failed),
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(4.dp)
         )
-        Button(onClick = retryAction) {
-            Text(stringResource(R.string.retry))
+        Button(
+            onClick = retryAction,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF437bba),
+                contentColor = Color.White
+            )
+        ) {
+            Text(text = stringResource(R.string.retry))
         }
     }
 }
@@ -376,7 +377,6 @@ fun AcrCard(
                     .padding(start = 10.dp),
                 verticalAlignment = Alignment.CenterVertically, // Posisikan informasi di tengah
             ) {
-                // Icon besar di kiri
                 Box(
                     modifier = Modifier
                         .size(100.dp) // Ukuran ikon besar tetap kecil

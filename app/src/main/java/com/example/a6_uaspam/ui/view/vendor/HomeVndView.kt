@@ -1,7 +1,6 @@
 package com.example.a6_uaspam.ui.view.vendor
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,17 +15,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -45,7 +39,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,6 +53,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.a6_uaspam.R
 import com.example.a6_uaspam.model.Vendor
 import com.example.a6_uaspam.ui.customwidget.CostumeTopAppBar
@@ -67,7 +65,6 @@ import com.example.a6_uaspam.ui.navigation.DestinasiHomeVnd
 import com.example.a6_uaspam.ui.viewmodel.PenyediaViewModel
 import com.example.a6_uaspam.ui.viewmodel.vendor.HomeUiStateV
 import com.example.a6_uaspam.ui.viewmodel.vendor.HomeVndViewModel
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -255,13 +252,22 @@ fun ManajemenSection(
 }
 
 @Composable
-fun OnLoading(
-    modifier: Modifier = Modifier
-) {
-    Image(
-        modifier = modifier.size(200.dp),
-        painter = painterResource(R.drawable.loading),
-        contentDescription = stringResource(R.string.loading)
+fun OnLoading(modifier: Modifier = Modifier) {
+    // Memuat file Lottie
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading))
+
+    // Menjalankan animasi
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        speed = 1.5f,
+        iterations = LottieConstants.IterateForever // Animasi berjalan terus-menerus
+    )
+
+    // Menampilkan animasi
+    LottieAnimation(
+        composition = composition,
+        progress = { progress },
+        modifier = modifier.size(50.dp)
     )
 }
 
@@ -270,19 +276,37 @@ fun OnError(
     retryAction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column (
+    Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Image(
-            painter = painterResource(id = R.drawable.error), contentDescription = ""
+    ) {
+        // Menggunakan animasi Lottie untuk menggantikan gambar error
+        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.erroranimation1))
+
+        val progress by animateLottieCompositionAsState(
+            composition = composition,
+            iterations = LottieConstants.IterateForever // Animasi terus berulang
         )
+
+        LottieAnimation(
+            composition = composition,
+            progress = { progress },
+            modifier = Modifier.size(250.dp) // Sesuaikan ukuran
+        )
+
         Text(
-            text = stringResource(R.string.loading_failed), modifier = Modifier.padding(16.dp)
+            text = stringResource(R.string.loading_failed),
+            modifier = Modifier.padding(4.dp)
         )
-        Button(onClick = retryAction) {
-            Text(stringResource(R.string.retry))
+        Button(
+            onClick = retryAction,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF437bba),
+                contentColor = Color.White
+            )
+        ) {
+            Text(text = stringResource(R.string.retry))
         }
     }
 }
