@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -15,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -129,7 +131,8 @@ fun EntryBodyVnd(
             onClick = onSaveClick,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth(),
-            enabled = insertUiState.isEntryValid.isValid() // Only enabled if form is valid
+            enabled = insertUiState.isEntryValid.isValid(), // Only enabled if form is valid
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF437bba))
         ) {
 
             Text(text = "Simpan")
@@ -137,6 +140,7 @@ fun EntryBodyVnd(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormInputVnd(
     insertUiEvent: InsertUiEventVnd,
@@ -164,7 +168,10 @@ fun FormInputVnd(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true,
-            isError = isEntryValid.namaV != null
+            isError = isEntryValid.namaV != null,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFF437bba),
+                focusedLabelColor = Color(0xFF437bba))
         )
         isEntryValid.namaV?.let {
             Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall)
@@ -191,7 +198,11 @@ fun FormInputVnd(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true,
-            isError = isEntryValid.telpV != null
+            isError = isEntryValid.telpV != null,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFF437bba),
+                focusedLabelColor = Color(0xFF437bba))
         )
         isEntryValid.telpV?.let {
             Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall)
@@ -205,7 +216,11 @@ fun FormInputVnd(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true,
-            isError = isEntryValid.emailV != null
+            isError = isEntryValid.emailV != null,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFF437bba),
+                focusedLabelColor = Color(0xFF437bba))
         )
         isEntryValid.emailV?.let {
             Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall)
