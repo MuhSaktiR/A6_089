@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -157,6 +158,7 @@ fun EntryBody(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormInput(
     insertUiEvent: InsertUiEvent,
@@ -243,6 +245,8 @@ fun FormInput(
 
     Column(
         modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+
     ) {
         // Nama Acara
         OutlinedTextField(
@@ -252,7 +256,10 @@ fun FormInput(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true,
-            isError = isEntryValid.nama != null
+            isError = isEntryValid.nama != null,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFF437bba),
+                focusedLabelColor = Color(0xFF437bba))
         )
         isEntryValid.nama?.let {
             Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall)
@@ -266,7 +273,10 @@ fun FormInput(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true,
-            isError = isEntryValid.deskripsi != null
+            isError = isEntryValid.deskripsi != null,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFF437bba),
+                focusedLabelColor = Color(0xFF437bba))
         )
         isEntryValid.deskripsi?.let {
             Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall)
@@ -288,7 +298,10 @@ fun FormInput(
                     Icon(Icons.Default.CalendarToday, contentDescription = "Pilih Tanggal dan Waktu Mulai")
                 }
             },
-            isError = isEntryValid.tanggalMulai != null
+            isError = isEntryValid.tanggalMulai != null,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFF437bba),
+                focusedLabelColor = Color(0xFF437bba))
         )
         isEntryValid.tanggalMulai?.let {
             Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall)
@@ -314,7 +327,10 @@ fun FormInput(
                     Icon(Icons.Default.CalendarToday, contentDescription = "Pilih Tanggal dan Waktu Berakhir")
                 }
             },
-            isError = isEntryValid.tanggalBerakhir != null
+            isError = isEntryValid.tanggalBerakhir != null,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFF437bba),
+                focusedLabelColor = Color(0xFF437bba))
         )
         isEntryValid.tanggalBerakhir?.let {
             Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall)
@@ -356,8 +372,8 @@ fun FormInput(
                     onValueChange(insertUiState.insertUiEvent.copy(idL = it.idL))
                 }
             },
-            isError = insertUiState.isEntryValid.idK != null,
-            errorMessage = insertUiState.isEntryValid.idK
+            isError = insertUiState.isEntryValid.idL != null,
+            errorMessage = insertUiState.isEntryValid.idL
         )
     }
 }
