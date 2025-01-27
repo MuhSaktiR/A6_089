@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,8 +29,8 @@ fun Dropdown(
     label: String,
     onValueChangedEvent: (String) -> Unit,
     modifier: Modifier = Modifier,
-    isError: Boolean = false, // New parameter for error state
-    errorMessage: String? = null // New parameter for error message
+    isError: Boolean = false,
+    errorMessage: String? = null
 ) {
     var expanded by remember {
         mutableStateOf(false)
@@ -51,7 +52,12 @@ fun Dropdown(
                         expanded = expanded
                     )
                 },
-                colors = OutlinedTextFieldDefaults.colors(),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color(0xFF437bba),
+                    focusedLabelColor = Color(0xFF437bba),
+                    unfocusedBorderColor = if (isError) Color.Red else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    unfocusedLabelColor = if (isError) Color.Red else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f)
+                ),
                 modifier = Modifier
                     .menuAnchor()
                     .fillMaxWidth()
