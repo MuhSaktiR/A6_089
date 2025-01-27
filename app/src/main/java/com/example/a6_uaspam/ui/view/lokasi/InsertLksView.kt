@@ -8,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -15,6 +16,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -128,7 +130,8 @@ fun EntryBodyLks(
             onClick = onSaveClick,
             shape = MaterialTheme.shapes.small,
             modifier = Modifier.fillMaxWidth(),
-            enabled = insertUiState.isEntryValid.isValid() // Only enabled if form is valid
+            enabled = insertUiState.isEntryValid.isValid(), // Only enabled if form is valid
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF437bba))
         ) {
 
             Text(text = "Simpan")
@@ -136,6 +139,7 @@ fun EntryBodyLks(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormInputLks(
     insertUiEvent: InsertUiEventLks,
@@ -157,6 +161,9 @@ fun FormInputLks(
             enabled = enabled,
             singleLine = true,
             isError = isEntryValid.namaL != null,
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFF437bba),
+                focusedLabelColor = Color(0xFF437bba))
         )
         // Supporting text (error message)
         isEntryValid.namaL?.let {
@@ -172,7 +179,9 @@ fun FormInputLks(
             enabled = enabled,
             singleLine = true,
             isError = isEntryValid.alamatL != null,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFF437bba),
+                focusedLabelColor = Color(0xFF437bba))
             )
         // Supporting text (error message)
         isEntryValid.alamatL?.let {
@@ -192,6 +201,9 @@ fun FormInputLks(
             singleLine = true,
             isError = isEntryValid.kapasitas != null,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = Color(0xFF437bba),
+                focusedLabelColor = Color(0xFF437bba))
         )
         // Supporting text (error message)
         isEntryValid.kapasitas?.let {
