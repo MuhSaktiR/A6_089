@@ -57,8 +57,8 @@ class InsertAcrViewModel(
             tanggalMulai = if (event.tanggalMulai.isNotEmpty()) null else "Tanggal Mulai Acara tidak boleh kosong",
             tanggalBerakhir = if (event.tanggalBerakhir.isNotEmpty()) null else "Tanggal Berakhir Acara tidak boleh kosong",
             status = if (event.status.isNotEmpty()) null else "Status Acara tidak boleh kosong",
-            idK = if (event.idK != null) null else "ID Klien tidak boleh kosong",
-            idL = if (event.idL != null) null else "ID Lokasi tidak boleh kosong"
+            idK = if (event.idK != null) null else "Pilihan Klien tidak boleh kosong",
+            idL = if (event.idL != null) null else "Pilihan Lokasi tidak boleh kosong"
         )
         uiState = uiState.copy(isEntryValid = errorState)
         return errorState.isValid()
