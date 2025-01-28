@@ -136,6 +136,7 @@ fun HomeScreenLokasi(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(75.dp)
+                    .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
                     .background(gradient),
                 contentAlignment = Alignment.Center
             ) {
