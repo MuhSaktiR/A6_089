@@ -2,6 +2,7 @@ package com.example.a6_uaspam.ui.view.acara
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -173,44 +174,69 @@ fun FormInput(
     // Daftar status acara
     val statusOptions = listOf("Direncanakan", "Berlangsung", "Selesai")
 
-    // State untuk tanggal dan waktu
-    val tanggalMulai = remember { mutableStateOf(insertUiEvent.tanggalMulai) }
-    val tanggalBerakhir = remember { mutableStateOf(insertUiEvent.tanggalBerakhir) }
-    val formattedDateTime = remember { mutableStateOf("") }
+    // State untuk tanggal mulai dan berakhir
+    val tanggalMulai = remember { mutableStateOf(insertUiState.insertUiEvent.tanggalMulai) }
+    val tanggalBerakhir = remember { mutableStateOf(insertUiState.insertUiEvent.tanggalBerakhir) }
+
+    // Menggunakan LaunchedEffect untuk memperbarui tanggal saat insertUiState berubah
+    LaunchedEffect(insertUiState) {
+        tanggalMulai.value = insertUiState.insertUiEvent.tanggalMulai
+        tanggalBerakhir.value = insertUiState.insertUiEvent.tanggalBerakhir
+    }
 
     val context = LocalContext.current
 
-    // Fungsi untuk memilih tanggal dan waktu
+    // Fungsi untuk mengatur tanggal dan waktu mulai
     val onDateMulaiSet = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
         val date = "$dayOfMonth-${month + 1}-$year"
         val updatedDate = "$date ${tanggalMulai.value.substringAfterLast(" ")}"
-        formattedDateTime.value = updatedDate
-        tanggalMulai.value = updatedDate // Update tanggalMulai dengan tanggal dan waktu
-        onValueChange(insertUiEvent.copy(tanggalMulai = updatedDate)) // Kirim data yang diperbarui
+        tanggalMulai.value = updatedDate
+        onValueChange(insertUiEvent.copy(tanggalMulai = updatedDate))
     }
 
     val onTimeMulaiSet = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
         val time = "$hourOfDay:$minute"
         val updatedDate = "${tanggalMulai.value.substringBefore(" ")} $time"
-        formattedDateTime.value = updatedDate
-        tanggalMulai.value = updatedDate // Gabungkan tanggal dan waktu
-        onValueChange(insertUiEvent.copy(tanggalMulai = updatedDate)) // Kirim data yang diperbarui
+        tanggalMulai.value = updatedDate
+        onValueChange(insertUiEvent.copy(tanggalMulai = updatedDate))
     }
 
+    // Fungsi untuk mengatur tanggal dan waktu berakhir
     val onDateBerakhirSet = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
         val date = "$dayOfMonth-${month + 1}-$year"
-        val updatedDate = "$date ${tanggalBerakhir.value.substringAfterLast(" ")}"
-        tanggalBerakhir.value = updatedDate // Update tanggalBerakhir dengan tanggal dan waktu
-        onValueChange(insertUiEvent.copy(tanggalBerakhir = updatedDate)) // Kirim data yang diperbarui
+        val waktuBerakhir = tanggalBerakhir.value.substringAfterLast(" ")
+        val updatedDate = "$date $waktuBerakhir"
+
+        val tanggalMulaiDate = tanggalMulai.value.substringBefore(" ")
+        val waktuMulai = tanggalMulai.value.substringAfterLast(" ")
+
+        // Validasi tanggal dan waktu
+        if (date > tanggalMulaiDate || (date == tanggalMulaiDate && waktuBerakhir >= waktuMulai)) {
+            tanggalBerakhir.value = updatedDate
+            onValueChange(insertUiEvent.copy(tanggalBerakhir = updatedDate))
+        } else {
+            Toast.makeText(context, "Tanggal Berakhir tidak boleh kurang dari Tanggal Mulai", Toast.LENGTH_SHORT).show()
+        }
     }
 
     val onTimeBerakhirSet = TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
         val time = "$hourOfDay:$minute"
-        val updatedDate = "${tanggalBerakhir.value.substringBefore(" ")} $time"
-        tanggalBerakhir.value = updatedDate // Gabungkan waktu dengan tanggal berakhir
-        onValueChange(insertUiEvent.copy(tanggalBerakhir = updatedDate)) // Kirim data yang diperbarui
+        val tanggalBerakhirDate = tanggalBerakhir.value.substringBefore(" ")
+        val updatedDate = "$tanggalBerakhirDate $time"
+
+        val tanggalMulaiDate = tanggalMulai.value.substringBefore(" ")
+        val waktuMulai = tanggalMulai.value.substringAfterLast(" ")
+
+        // Validasi tanggal dan waktu
+        if (tanggalBerakhirDate > tanggalMulaiDate || (tanggalBerakhirDate == tanggalMulaiDate && time >= waktuMulai)) {
+            tanggalBerakhir.value = updatedDate
+            onValueChange(insertUiEvent.copy(tanggalBerakhir = updatedDate))
+        } else {
+            Toast.makeText(context, "Waktu Berakhir tidak boleh kurang dari Waktu Mulai", Toast.LENGTH_SHORT).show()
+        }
     }
 
+    //Tanggal dan Waktu Mulai dan Berakhir
     val datePickerDialogMulai = DatePickerDialog(
         context,
         onDateMulaiSet,
@@ -282,14 +308,15 @@ fun FormInput(
             Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall)
         }
 
-        // Tanggal Mulai Acara dengan pemilih tanggal dan waktu
+        // Tanggal Mulai Acara
         OutlinedTextField(
-            value = formattedDateTime.value.ifEmpty { tanggalMulai.value },
+            value = tanggalMulai.value,
             onValueChange = { onValueChange(insertUiEvent.copy(tanggalMulai = it)) },
             label = { Text("Tanggal Mulai Acara") },
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true,
+            readOnly = true,
             trailingIcon = {
                 IconButton(onClick = {
                     datePickerDialogMulai.show()
@@ -301,13 +328,14 @@ fun FormInput(
             isError = isEntryValid.tanggalMulai != null,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = Color(0xFF437bba),
-                focusedLabelColor = Color(0xFF437bba))
+                focusedLabelColor = Color(0xFF437bba)
+            )
         )
         isEntryValid.tanggalMulai?.let {
             Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall)
         }
 
-        // Tanggal Berakhir Acara dengan pemilih tanggal dan waktu
+        // Tanggal Berakhir Acara
         OutlinedTextField(
             value = tanggalBerakhir.value,
             onValueChange = {
@@ -319,6 +347,7 @@ fun FormInput(
             modifier = Modifier.fillMaxWidth(),
             enabled = enabled,
             singleLine = true,
+            readOnly = true,
             trailingIcon = {
                 IconButton(onClick = {
                     datePickerDialogBerakhir.show()
@@ -330,7 +359,8 @@ fun FormInput(
             isError = isEntryValid.tanggalBerakhir != null,
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = Color(0xFF437bba),
-                focusedLabelColor = Color(0xFF437bba))
+                focusedLabelColor = Color(0xFF437bba)
+            )
         )
         isEntryValid.tanggalBerakhir?.let {
             Text(text = it, color = Color.Red, style = MaterialTheme.typography.bodySmall)
