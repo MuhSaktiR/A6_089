@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.AlertDialog
@@ -34,6 +33,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -144,7 +144,7 @@ fun HomeScreenAcara(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(730.dp)
-                .clip(RoundedCornerShape(topStart = 70.dp, topEnd = 70.dp))
+                .clip(RoundedCornerShape(topStart = 50.dp, topEnd = 50.dp))
                 .background(Color.White)
                 .align(Alignment.BottomEnd)
         )
@@ -209,6 +209,7 @@ fun HomeScreenAcara(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(75.dp)
+                .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
                 .background(gradient)
                 .align(Alignment.BottomCenter),
             contentAlignment = Alignment.Center
@@ -522,6 +523,11 @@ fun AcrCard(
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
+                    )
+
+                    Divider(
+                        thickness = 4.dp,
+                        modifier = Modifier.padding(bottom = 5.dp)
                     )
 
                     Row(verticalAlignment = Alignment.CenterVertically) {
