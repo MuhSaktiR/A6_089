@@ -1,6 +1,7 @@
 package com.example.a6_uaspam.ui.view.klien
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,16 +11,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -34,7 +38,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,12 +46,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,24 +73,30 @@ import com.example.a6_uaspam.ui.viewmodel.klien.HomeUiStateK
 @Composable
 fun HomeScreenKlien(
     navigateToItemEntry: () -> Unit,
+    onNavigateHome: () -> Unit,
     modifier: Modifier = Modifier,
     onDetailClick: (Int) -> Unit = {},
     onEditClick: (Int) -> Unit = {},
-    onManajemenAcaraClick: () -> Unit = {},
-    onManajemenLokasiClick: () -> Unit = {},
-    onManajemenVendorClick: () -> Unit = {},
+    navigateBack: () -> Unit,
     viewModel: HomeKlnViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val gradient = Brush.linearGradient(
+        colors = listOf(
+            Color(0xFF1A9AF2),
+            Color(0xFF2C83B1),
+            Color(0xFF554B95)
+        ),
+        start = Offset(0f, 0f),
+        end = Offset(1000f, 1000f)
+    )
 
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             CostumeTopAppBar(
                 title = DestinasiHomeKln.titleRes,
-                canNavigateBack = false,
+                navigateUp = navigateBack,
+                canNavigateBack = true,
                 showRefreshButton = true,
-                scrollBehavior = scrollBehavior,
                 onRefresh = { viewModel.getKln() }
             )
         },
@@ -95,33 +104,66 @@ fun HomeScreenKlien(
             FloatingActionButton(
                 onClick = navigateToItemEntry,
                 shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp),
+                modifier = Modifier
+                    .padding(18.dp)
+                    .padding(bottom = 21.dp)
+                    .width(141.dp)
+                    .height(40.dp), // Beri jarak dari bottom bar
                 containerColor = Color(0xFF437bba)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Tambah Klien",
-                    tint = Color.White)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Tambah", tint = Color.White)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = "Tambah Klien", fontSize = 12.sp, color = Color.White)
+                }
             }
         },
+        bottomBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(75.dp)
+                    .background(gradient),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { }) {
+                        Icon(imageVector = Icons.Default.CalendarToday, contentDescription = "Kalender", tint = Color.White)
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(45.dp)
+                            .background(Color.White, shape = CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        IconButton(onClick = { onNavigateHome() }) {
+                            Icon(imageVector = Icons.Default.Home, contentDescription = "Halaman Utama", tint = Color.Black)
+                        }
+                    }
+
+                    IconButton(onClick = { }) {
+                        Icon(imageVector = Icons.Default.Notifications, contentDescription = "Notif", tint = Color.White)
+                    }
+                }
+            }
+        }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            // Manajemen Section
-            ManajemenSection(
-                onManajemenAcaraClick = onManajemenAcaraClick,
-                onManajemenLokasiClick = onManajemenLokasiClick,
-                onManajemenVendorClick = onManajemenVendorClick
-            )
-
             Spacer(modifier = Modifier.height(16.dp))
 
             // Daftar Klien
             HomeStatusKlien(
                 homeUiState = viewModel.klnUIState,
                 retryAction = { viewModel.getKln() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f), // Menambahkan weight agar bisa mengisi ruang yang tersisa
+                modifier = Modifier.fillMaxWidth(),
                 onDetailClick = onDetailClick,
                 onEditClick = onEditClick,
                 onDeleteClick = {
@@ -132,6 +174,7 @@ fun HomeScreenKlien(
         }
     }
 }
+
 
 @Composable
 fun HomeStatusKlien(
@@ -164,90 +207,6 @@ fun HomeStatusKlien(
                 )
             }
         is HomeUiStateK.Error -> OnError(retryAction, modifier = modifier.fillMaxSize())
-    }
-}
-
-@Composable
-fun ManajemenSection(
-    onManajemenAcaraClick: () -> Unit,
-    onManajemenLokasiClick: () -> Unit,
-    onManajemenVendorClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val currentIndex = remember { mutableStateOf(0) } // Untuk melacak kategori yang sedang ditampilkan
-
-    // Daftar tombol manajemen
-    val manajemenItems = listOf("Manajemen Vendor", "Manajemen Lokasi", "Manajemen Acara")
-    val onClickActions = listOf(onManajemenVendorClick, onManajemenLokasiClick, onManajemenAcaraClick)
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Judul untuk kategori yang sedang ditampilkan
-        Text(
-            text = "Manajemen Kategori",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        // Baris untuk navigasi kategori
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            // Tombol Navigasi Kiri
-            IconButton(
-                onClick = {
-                    if (currentIndex.value > 0) {
-                        currentIndex.value -= 1
-                    }
-                },
-                enabled = currentIndex.value > 0
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Scroll Left",
-                    tint = if (currentIndex.value > 0) Color(0xFF437bba) else Color.Gray
-                )
-            }
-
-            // Tombol kategori aktif dengan warna kustom
-            Button(
-                onClick = onClickActions[currentIndex.value],
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .width(200.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF437bba))
-            ) {
-                Text(
-                    text = manajemenItems[currentIndex.value],
-                    textAlign = TextAlign.Center,
-                    color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            // Tombol Navigasi Kanan
-            IconButton(
-                onClick = {
-                    if (currentIndex.value < manajemenItems.size - 1) {
-                        currentIndex.value += 1
-                    }
-                },
-                enabled = currentIndex.value < manajemenItems.size - 1
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = "Scroll Right",
-                    tint = if (currentIndex.value < manajemenItems.size - 1) Color(0xFF437bba) else Color.Gray
-                )
-            }
-        }
     }
 }
 
@@ -320,7 +279,9 @@ fun KlnLayout(
     onDeleteClick: (Klien) -> Unit = {}
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxSize(), // Pastikan LazyColumn mengisi ruang yang tersedia
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(max = 600.dp),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -338,6 +299,10 @@ fun KlnLayout(
         )
     }
 }
+
+
+
+
 
 @Composable
 fun KlnCard(
@@ -363,8 +328,9 @@ fun KlnCard(
 
     Card(
         shape = MaterialTheme.shapes.medium,
-        modifier = modifier.padding(horizontal = 16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        modifier = modifier.padding(horizontal = 25.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFf5f2f2))
     ) {
         Column (
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -373,14 +339,14 @@ fun KlnCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp)
                     .padding(start = 10.dp),
                 verticalAlignment = Alignment.CenterVertically // Posisikan informasi di tengah
             ) {
                 // Icon besar di kiri
                 Box(
                     modifier = Modifier
-                        .size(100.dp) // Ukuran ikon besar tetap kecil
+                        .padding(start = 18.dp)
+                        .size(80.dp)
                         .padding(8.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -388,7 +354,7 @@ fun KlnCard(
                         painter = painterResource(id = R.drawable.klien),
                         contentDescription = "Icon Klien",
                         modifier = Modifier
-                            .size(100.dp)
+                            .size(80.dp)
                             .clip(RoundedCornerShape(90.dp))
                     )
                 }
@@ -398,7 +364,9 @@ fun KlnCard(
                 // Informasi di kanan
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp), // Spasi antar baris
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .padding(start = 25.dp)
+                        .weight(0.4f)
                 ) {
                     Text(
                         text = klien.namaK,
@@ -431,31 +399,37 @@ fun KlnCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(horizontal = 6.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Button(
                     onClick = { onDetailClick(klien) },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF437bba)),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .height(35.dp)
+                        .width(90.dp)
                 ) {
-                    Text("Detail", color = Color.White, fontSize = 18.sp)
+                    Text("Detail", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 }
 
                 Button(
                     onClick = { onEditClick(klien) },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFc7b648)),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .height(35.dp)
+                        .width(90.dp)
                 ) {
-                    Text("Edit", color = Color.White, fontSize = 18.sp)
+                    Text("Edit", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 }
 
                 Button(
                     onClick = { showDialog = true },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFba4b43)),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .height(35.dp)
+                        .width(90.dp)
                 ) {
-                    Text("Delete", color = Color.White, fontSize = 18.sp)
+                    Text("Delete", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
