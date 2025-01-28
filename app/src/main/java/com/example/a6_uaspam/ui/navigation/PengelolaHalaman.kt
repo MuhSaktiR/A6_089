@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.a6_uaspam.ui.view.ViewAwal
 import com.example.a6_uaspam.ui.view.acara.DetailScreenAcr
 import com.example.a6_uaspam.ui.view.acara.EntryScreenAcara
 import com.example.a6_uaspam.ui.view.acara.HomeScreenAcara
@@ -31,9 +32,18 @@ fun PengelolaHalaman(
 ) {
     NavHost(
         navController = navController,
-        startDestination = DestinasiHomeAcr.route,
+        startDestination = DestinasiSplash.route,
         modifier = Modifier
     ) {
+        composable (
+            DestinasiSplash.route
+        ) {
+            ViewAwal (
+                onMulaiButton = {
+                    navController.navigate(DestinasiHomeAcr.route)
+                }
+            )
+        }
         composable(
             DestinasiHomeAcr.route
         ) {
@@ -72,14 +82,11 @@ fun PengelolaHalaman(
                 onEditClick = { id ->
                     navController.navigate("${DestinasiUpdateLks.route}/$id")
                 },
-                onManajemenAcaraClick = {
+                navigateBack = {
                     navController.navigate(DestinasiHomeAcr.route)
                 },
-                onManajemenKlienClick = {
-                    navController.navigate(DestinasiHomeKln.route)
-                },
-                onManajemenVendorClick = {
-                    navController.navigate(DestinasiHomeVnd.route)
+                onNavigateHome = {
+                    navController.navigate(DestinasiHomeAcr.route)
                 }
             )
         }
@@ -97,15 +104,11 @@ fun PengelolaHalaman(
                 onEditClick = { id ->
                     navController.navigate("${DestinasiUpdateKln.route}/$id")
                 },
-
-                onManajemenAcaraClick = {
+                navigateBack = {
                     navController.navigate(DestinasiHomeAcr.route)
                 },
-                onManajemenLokasiClick = {
-                    navController.navigate(DestinasiHomeLks.route)
-                },
-                onManajemenVendorClick = {
-                    navController.navigate(DestinasiHomeVnd.route)
+                onNavigateHome = {
+                    navController.navigate(DestinasiHomeAcr.route)
                 }
             )
         }
@@ -123,14 +126,11 @@ fun PengelolaHalaman(
                 onEditClick = { id ->
                     navController.navigate("${DestinasiUpdateVnd.route}/$id")
                 },
-                onManajemenAcaraClick = {
+                navigateBack = {
                     navController.navigate(DestinasiHomeAcr.route)
                 },
-                onManajemenLokasiClick = {
-                    navController.navigate(DestinasiHomeLks.route)
-                },
-                onManajemenKlienClick = {
-                    navController.navigate(DestinasiHomeKln.route)
+                onNavigateHome = {
+                    navController.navigate(DestinasiHomeAcr.route)
                 }
             )
         }
