@@ -297,7 +297,8 @@ fun ManajemenSection(
         // Judul untuk kategori yang sedang ditampilkan
         Text(
             text = "Manajemen Kategori",
-            style = MaterialTheme.typography.titleMedium,
+            fontSize = 20.sp,
+            style = MaterialTheme.typography.labelLarge,
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
@@ -430,7 +431,9 @@ fun AcrLayout(
     onDeleteClick: (Acara) -> Unit = {}
 ) {
     LazyColumn(
-        modifier = modifier.fillMaxSize(), // Pastikan LazyColumn mengisi ruang yang tersedia
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(max = 420.dp), // Batas maksimal tinggi
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -473,8 +476,9 @@ fun AcrCard(
 
     Card(
         shape = MaterialTheme.shapes.medium,
-        modifier = modifier.padding(horizontal = 16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        modifier = modifier.padding(horizontal = 25.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFf5f2f2))
     ) {
         Column (
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -567,31 +571,31 @@ fun AcrCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                    .padding(horizontal = 8.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp) // Sebar tombol secara merata
             ) {
                 Button(
                     onClick = { onDetailClick(acara) },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF437bba)),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(0.5f)
                 ) {
-                    Text("Detail", color = Color.White, fontSize = 18.sp)
+                    Text("Detail", color = Color.White, fontSize = 14.sp)
                 }
 
                 Button(
                     onClick = { onEditClick(acara) },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFc7b648)),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(0.5f)
                 ) {
-                    Text("Edit", color = Color.White, fontSize = 18.sp)
+                    Text("Edit", color = Color.White, fontSize = 14.sp)
                 }
 
                 Button(
                     onClick = { showDialog = true },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFba4b43)),
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(0.5f)
                 ) {
-                    Text("Delete", color = Color.White, fontSize = 18.sp)
+                    Text("Delete", color = Color.White, fontSize = 14.sp)
                 }
             }
         }
