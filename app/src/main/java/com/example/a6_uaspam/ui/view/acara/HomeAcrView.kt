@@ -76,6 +76,7 @@ import okhttp3.internal.wait
 @Composable
 fun HomeScreenAcara(
     navigateToItemEntry: () -> Unit,
+    navigateToHome: () -> Unit,
     modifier: Modifier = Modifier,
     onDetailClick: (Int) -> Unit = {},
     onEditClick: (Int) -> Unit = {},
@@ -227,7 +228,7 @@ fun HomeScreenAcara(
                         .background(Color.White, shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { navigateToHome() }) {
                         Icon(imageVector = Icons.Default.Home, contentDescription = "Halaman Utama", tint = Color.Black)
                     }
                 }
