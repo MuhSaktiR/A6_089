@@ -1,6 +1,7 @@
 package com.example.a6_uaspam.ui.view.acara
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,18 +11,24 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,10 +39,8 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,8 +49,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -61,11 +67,10 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.a6_uaspam.R
 import com.example.a6_uaspam.model.Acara
-import com.example.a6_uaspam.ui.customwidget.CostumeTopAppBar
-import com.example.a6_uaspam.ui.navigation.DestinasiHomeAcr
 import com.example.a6_uaspam.ui.viewmodel.PenyediaViewModel
 import com.example.a6_uaspam.ui.viewmodel.acara.HomeAcrViewModel
 import com.example.a6_uaspam.ui.viewmodel.acara.HomeUiState
+import okhttp3.internal.wait
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,31 +84,76 @@ fun HomeScreenAcara(
     onManajemenVendorClick: () -> Unit = {},
     viewModel: HomeAcrViewModel = viewModel(factory = PenyediaViewModel.Factory)
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val gradient = Brush.linearGradient(
+        colors = listOf(
+            Color(0xFF1A9AF2), // rgba(26,164,242)
+            Color(0xFF2C83B1), // rgba(44,131,177)
+            Color(0xFF554B95)  // rgba(85,75,149)
+        ),
+        start = Offset(0f, 0f),  // Gradient posisi awal
+        end = Offset(1000f, 1000f) // Gradient posisi akhir (209 degrees)
+    )
 
-    Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            CostumeTopAppBar(
-                title = DestinasiHomeAcr.titleRes,
-                canNavigateBack = false,
-                showRefreshButton = true,
-                scrollBehavior = scrollBehavior,
-                onRefresh = { viewModel.getAcr() }
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = navigateToItemEntry,
-                shape = MaterialTheme.shapes.medium,
-                modifier = Modifier.padding(18.dp),
-                containerColor = Color(0xFF437bba)
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(gradient)
+    ) {
+        // Top section
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp)
+                    .padding(top = 40.dp)
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Tambah Acara", tint = Color.White)
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                ) {
+                    Text(
+                        text = "Sakti App",
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        color = Color.White,
+                    )
+
+                    Text(
+                        text = "Manajemen Acara ",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Image(
+                    painter = painterResource(id = R.drawable.acarautama),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(80.dp)
+                )
             }
-        },
-    ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(730.dp)
+                .clip(RoundedCornerShape(topStart = 70.dp, topEnd = 70.dp))
+                .background(Color.White)
+                .align(Alignment.BottomEnd)
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 180.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             // Manajemen Section
             ManajemenSection(
                 onManajemenLokasiClick = onManajemenLokasiClick,
@@ -111,15 +161,12 @@ fun HomeScreenAcara(
                 onManajemenVendorClick = onManajemenVendorClick
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
             // Daftar Acara
             HomeStatusAcara(
                 homeUiState = viewModel.acrUIState,
                 retryAction = { viewModel.getAcr() },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f), // Menambahkan weight agar bisa mengisi ruang yang tersisa
+                    .fillMaxWidth(),
                 onDetailClick = onDetailClick,
                 onEditClick = onEditClick,
                 onDeleteClick = {
@@ -128,8 +175,71 @@ fun HomeScreenAcara(
                 }
             )
         }
+
+        // Adding the Floating Action Button at the bottom
+        FloatingActionButton(
+            onClick = navigateToItemEntry,
+            shape = MaterialTheme.shapes.medium,
+            modifier = Modifier
+                .padding(25.dp)
+                .padding(end = 10.dp)
+                .padding(bottom = 105.dp)
+                .align(Alignment.BottomEnd)
+                .width(140.dp) // Atur lebar tombol
+                .height(40.dp), // Atur tinggi tombol
+            containerColor = Color(0xFF437bba)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically, // Menyusun ikon dan teks di tengah secara vertikal
+                horizontalArrangement = Arrangement.Center // Menyusun isi row secara horisontal
+            ) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Tambah Acara", tint = Color.White)
+                Spacer(modifier = Modifier.width(8.dp)) // Memberi jarak antara ikon dan teks
+                Text(
+                    text = "Tambah Acara",
+                    fontSize = 12.sp, // Ukuran font yang lebih besar agar teks bisa panjang
+                    color = Color.White
+                )
+            }
+        }
+
+        // Bottom Navigation Bar
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(75.dp)
+                .background(gradient)
+                .align(Alignment.BottomCenter),
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = { }) {
+                    Icon(imageVector = Icons.Default.CalendarToday, contentDescription = "Kalender", tint = Color.White)
+                }
+
+                Box(
+                    modifier = Modifier
+                        .size(45.dp)
+                        .background(Color.White, shape = CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    IconButton(onClick = { }) {
+                        Icon(imageVector = Icons.Default.Home, contentDescription = "Halaman Utama", tint = Color.Black)
+                    }
+                }
+
+                IconButton(onClick = { }) {
+                    Icon(imageVector = Icons.Default.Notifications, contentDescription = "Notif", tint = Color.White)
+                }
+            }
+        }
     }
 }
+
 
 @Composable
 fun HomeStatusAcara(
