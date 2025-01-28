@@ -57,6 +57,9 @@ fun PengelolaHalaman(
                 onEditClick = { id ->
                     navController.navigate("${DestinasiUpdateAcr.route}/$id")
                 },
+                navigateToHome = {
+                    navController.navigate(DestinasiHomeAcr.route)
+                },
                 onManajemenLokasiClick = {
                     navController.navigate(DestinasiHomeLks.route)
                 },
